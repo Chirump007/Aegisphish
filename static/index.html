@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisPhish | Zero-Phish AI & Anti-Phishing Platform</title>
+  <meta name="description" content="Stop credential theft before it happens. Real-time heuristic URL scanner, leak detection, and phishing-resistant passkey protection.">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Ambient glowing lime radials -->
+  <div class="ambient-glow-tl" aria-hidden="true"></div>
+  <div class="ambient-glow-br" aria-hidden="true"></div>
+
+  <!-- Minimalist Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <!-- Left: Logo & Brand Name -->
+      <a href="#" class="nav-brand" aria-label="AegisPhish Home">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f53c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="brand-name">AegisPhish</span>
+      </a>
+
+      <!-- Center: Status dot & text -->
+      <div class="nav-center">
+        <div class="status-dot"></div>
+        <span>+ ANTI-PHISHING PLATFORM</span>
+      </div>
+
+      <!-- Right: Pill Menu Button -->
+      <button class="nav-menu-btn" id="menuToggleBtn" aria-label="Open Navigation Menu">
+        <span>MENU</span>
+        <div class="menu-bars">
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Slide-out Menu Drawer -->
+  <div class="menu-drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="menu-drawer" id="menuDrawer" aria-label="Site Navigation">
+    <div class="drawer-header">
+      <div class="brand-name" style="font-size: 1.2rem;">AegisPhish Menu</div>
+      <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Menu">&times;</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="#scannerSection" class="drawer-link">Live URL Scanner</a>
+      <a href="#defenseModules" class="drawer-link">Defense Modules</a>
+      <a href="#phishingArena" class="drawer-link">Spot the Fake Arena</a>
+      <a href="#certifications" class="drawer-link">Certifications & Stats</a>
+    </nav>
+    <div class="drawer-footer">
+      <p style="margin-bottom: 8px; color: var(--neon-lime); font-weight: 700;">Simple English Security</p>
+      <p>AegisPhish stops password theft and fake login pages with instant AI rules.</p>
+    </div>
+  </aside>
+
+  <main>
+    <!-- 1. HERO SECTION -->
+    <section class="hero-section" id="heroSection">
+      <div class="container">
+        <!-- Huge Centered Headline -->
+        <h1 class="hero-headline">
+          <span class="headline-line">DRIVING</span>
+          <span class="headline-line">SECURITY WITH</span>
+          <span class="highlight-badge">[ZERO-PHISH AI]</span>
+        </h1>
+
+        <!-- Vertical Thin Divider Line -->
+        <div class="hero-divider" aria-hidden="true"></div>
+
+        <!-- Centered Subtext in Simple English -->
+        <p class="hero-subtext">
+          Neutralize credential harvesting before it happens. Real-time heuristic URL inspection, leak detection, and phishing-resistant Passkey enforcement.
+        </p>
+
+        <!-- Dark Glassmorphism URL Input Box -->
+        <form id="scanForm" class="scanner-search-box" onsubmit="event.preventDefault(); triggerScan();">
+          <div class="search-input-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="urlInput" 
+            placeholder="Paste suspicious URL to scan (e.g., http://paypa1-verify-login.xyz)..." 
+            aria-label="URL to scan"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          />
+          <button type="submit" class="btn-neon-action" id="scanSubmitBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Analyze URL</span>
+          </button>
+        </form>
+
+        <!-- Quick Sample Test Buttons -->
+        <div class="quick-samples">
+          <span class="quick-samples-label">Try test cases:</span>
+          <button type="button" class="sample-chip" onclick="loadSample('https://accounts.google.com')">Safe Google Portal</button>
+          <button type="button" class="sample-chip" onclick="loadSample('http://paypa1-security-verify-account.top/login.php')">Fake PayPal Trap</button>
+          <button type="button" class="sample-chip" onclick="loadSample('http://192.241.168.42/secure-banking/signin.html')">Raw IP Address</button>
+          <button type="button" class="sample-chip" onclick="loadSample('https://microsoft.com.account-update.xyz/login')">Subdomain Spoof</button>
+          <button type="button" class="sample-chip" onclick="loadSample('https://bit.ly/urgent-account-verification-alert')">Shortened Link</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. LIVE URL SCANNER & VERDICT (Interactive Widget) -->
+    <section class="scanner-results-section" id="scannerSection">
+      <div class="container">
+        <div class="results-card" id="resultsCard">
+          <div class="results-grid">
+            <!-- Left: Animated Risk Gauge Meter -->
+            <div class="gauge-box">
+              <div class="gauge-svg-wrap">
+                <svg class="gauge-svg" viewBox="0 0 160 160">
+                  <circle class="gauge-bg" cx="80" cy="80" r="70"></circle>
+                  <circle class="gauge-fill" id="gaugeCircle" cx="80" cy="80" r="70"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <div class="gauge-number" id="riskScoreNumber">0%</div>
+                  <div class="gauge-unit">Risk Score</div>
+                </div>
+              </div>
+              <div class="gauge-label" id="gaugeStatusText">Ready to inspect</div>
+            </div>
+
+            <!-- Right: Verdict & Threat Tags -->
+            <div class="results-details">
+              <div class="results-header-row">
+                <div class="target-url-display" id="displayUrl">
+                  https://example-site.com
+                </div>
+                <div class="status-badge-lg safe" id="statusBadge">
+                  <span id="statusBadgeDot">●</span>
+                  <span id="statusBadgeText">Status: Safe</span>
+                </div>
+              </div>
+
+              <div>
+                <h2 class="verdict-headline" id="verdictHeadline">
+                  Paste any web link above to check if it tries to steal your passwords.
+                </h2>
+              </div>
+
+              <!-- Actionable Advice in Simple English -->
+              <div class="verdict-advice" id="verdictAdvice">
+                Our AI checks if the website uses fake letters, missing security certificates, or secret redirects before you click.
+              </div>
+
+              <!-- Threat Tags Container -->
+              <div>
+                <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 8px;">
+                  Detected Threat Tags:
+                </div>
+                <div class="threat-tags-wrap" id="threatTagsContainer">
+                  <span class="threat-tag safe-tag">Ready for scanning</span>
+                  <span class="threat-tag">Heuristic engine online</span>
+                </div>
+              </div>
+
+              <!-- Metric Breakdown Progress Bars -->
+              <div class="breakdown-row">
+                <div class="breakdown-item">
+                  <div class="breakdown-header">
+                    <span>Domain Safety</span>
+                    <span id="valDomain">100%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-bar-fill" id="barDomain" style="width: 100%;"></div>
+                  </div>
+                </div>
+
+                <div class="breakdown-item">
+                  <div class="breakdown-header">
+                    <span>Link Randomness</span>
+                    <span id="valEntropy">100%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-bar-fill" id="barEntropy" style="width: 100%;"></div>
+                  </div>
+                </div>
+
+                <div class="breakdown-item">
+                  <div class="breakdown-header">
+                    <span>Credential Risk</span>
+                    <span id="valCredential">100%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-bar-fill" id="barCredential" style="width: 100%;"></div>
+                  </div>
+                </div>
+
+                <div class="breakdown-item">
+                  <div class="breakdown-header">
+                    <span>SSL Encryption</span>
+                    <span id="valProtocol">100%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-bar-fill" id="barProtocol" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. KEY DEFENSE MODULES (3-Column Bento Grid) -->
+    <section class="modules-section" id="defenseModules">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">+ THREE-TIER DEFENSE</span>
+          <h2 class="section-title">Built to Stop Credential Theft</h2>
+          <p class="section-description">
+            Traditional antivirus looks for bad files. AegisPhish stops the deceptive pages that steal your logins.
+          </p>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Card 1: AI Typosquatting & Heuristics -->
+          <div class="bento-card">
+            <div>
+              <div class="card-icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+              </div>
+              <h3>AI Typosquatting & Heuristics</h3>
+              <p>
+                Stops lookalike domains targeting single sign-on (SSO) and login portals. Scans for sneaky swapped letters like "1" for "l" and fake dot tricks.
+              </p>
+            </div>
+
+            <!-- Interactive Subtool: Lookalike Tester -->
+            <div class="interactive-subtool">
+              <div class="subtool-title">Try Brand Lookalike Tester</div>
+              <div class="subtool-input-group">
+                <input type="text" id="brandTestInput" class="subtool-input" placeholder="Type a brand (e.g. Netflix, PayPal, Bank)" value="PayPal">
+                <button type="button" class="subtool-btn" onclick="testBrandLookalikes()">Generate</button>
+              </div>
+              <div class="subtool-result" id="brandTestResult">
+                Click Generate to see dangerous lookalike tricks attackers use.
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Credential Leak Monitor -->
+          <div class="bento-card">
+            <div>
+              <div class="card-icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                </svg>
+              </div>
+              <h3>Credential Leak Monitor</h3>
+              <p>
+                Alerts users if workplace or personal passwords circulate on paste sites. Stops credential stuffing before attackers access internal tools.
+              </p>
+            </div>
+
+            <!-- Interactive Subtool: Leak Search -->
+            <div class="interactive-subtool">
+              <div class="subtool-title">Check Email or Domain Leak Radar</div>
+              <div class="subtool-input-group">
+                <input type="text" id="leakTestInput" class="subtool-input" placeholder="name@company.com" value="admin@workplace.com">
+                <button type="button" class="subtool-btn" onclick="testLeakRadar()">Check</button>
+              </div>
+              <div class="subtool-result" id="leakTestResult">
+                Enter an email or domain to scan breach records.
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: FIDO2 & Passkey Integration -->
+          <div class="bento-card">
+            <div>
+              <div class="card-icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <h3>FIDO2 & Passkey Integration</h3>
+              <p>
+                Phishing-resistant hardware and cryptographic login advocacy. Passkeys bind strictly to real domain names, making credential theft technically impossible.
+              </p>
+            </div>
+
+            <!-- Interactive Subtool: Password vs Passkey Simulator -->
+            <div class="interactive-subtool">
+              <div class="subtool-title">Interactive Defense Comparison</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <button type="button" id="btnModePassword" class="subtool-btn" style="flex: 1; font-size: 0.75rem;" onclick="setPasskeySim('password')">Standard Password</button>
+                <button type="button" id="btnModePasskey" class="subtool-btn" style="flex: 1; font-size: 0.75rem; background: var(--neon-lime); color: #000;" onclick="setPasskeySim('passkey')">FIDO2 Passkey</button>
+              </div>
+              <div class="subtool-result" id="passkeyTestResult">
+                Passkeys bind cryptographically to the real domain. A fake phishing site gets zero data.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. INTERACTIVE PHISHING ARENA: SPOT THE FAKE -->
+    <section class="arena-section" id="phishingArena">
+      <div class="container">
+        <div class="arena-container">
+          <div class="arena-controls">
+            <div class="arena-title-wrap">
+              <span class="section-tag" style="margin-bottom: 4px;">+ INTERACTIVE TRAINING</span>
+              <h3>Spot the Fake: Login Arena</h3>
+              <p>Can you tell the real portal from the malicious credential harvester? Click the red warning pins to inspect the tricks.</p>
+            </div>
+            <div class="arena-mode-tabs">
+              <button class="arena-tab-btn active" id="tabInspect" onclick="switchArenaMode('inspect')">Inspect Mode</button>
+              <button class="arena-tab-btn" id="tabQuiz" onclick="switchArenaMode('quiz')">Challenge Quiz</button>
+            </div>
+          </div>
+
+          <!-- Side-by-side browser windows -->
+          <div class="arena-windows-grid">
+            <!-- Window 1: Genuine Login Portal -->
+            <div class="browser-window genuine-window">
+              <div class="window-top-bar">
+                <div class="window-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="window-address-bar lock-green">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span>https://accounts.google.com/v3/signin/identifier</span>
+                </div>
+                <span class="window-badge-pill badge-genuine">Genuine</span>
+              </div>
+              <div class="window-page-content">
+                <div class="simulated-card">
+                  <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; color: #ffffff;">Google Sign in</div>
+                  <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 16px;">Use your Google Account</div>
+                  <input type="text" class="sim-input" value="user@example.com" readonly>
+                  <button type="button" class="sim-btn" style="background: #1a73e8;">Next</button>
+                  <div style="margin-top: 12px; font-size: 0.7rem; color: #64748b;">Protected by official Google Security</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Window 2: Spoofed Credential Harvester (With Clue Hotspots) -->
+            <div class="browser-window spoofed-window">
+              <div class="window-top-bar">
+                <div class="window-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="window-address-bar lock-red">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  </svg>
+                  <!-- The Deceptive URL with Cyrillic lookalike / typo -->
+                  <span>http://accounts-g00gle.com.verify-login.xyz/auth</span>
+                </div>
+                <span class="window-badge-pill badge-fake">Fake Trap</span>
+              </div>
+              <div class="window-page-content" style="position: relative;">
+                <!-- Hotspot Pin 1 (URL Typo) -->
+                <div class="clue-pin pin-1" onclick="showClue(1)" title="Click to inspect Clue 1">1</div>
+
+                <!-- Hotspot Pin 2 (Urgency countdown) -->
+                <div class="clue-pin pin-2" onclick="showClue(2)" title="Click to inspect Clue 2">2</div>
+
+                <!-- Hotspot Pin 3 (Fake lock badge inside page) -->
+                <div class="clue-pin pin-3" onclick="showClue(3)" title="Click to inspect Clue 3">3</div>
+
+                <div class="simulated-card" style="border: 1px solid rgba(255, 71, 87, 0.3);">
+                  <!-- Urgent banner used by scammers -->
+                  <div style="background: #ff4757; color: #ffffff; font-size: 0.68rem; font-weight: 800; padding: 4px 6px; border-radius: 4px; margin-bottom: 10px;">
+                    ⚠️ ACTION REQUIRED: Account will be suspended in 04:59!
+                  </div>
+                  <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; color: #ffffff;">Google Sign in</div>
+                  <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 12px;">Verify your password to unlock</div>
+                  <input type="text" class="sim-input" placeholder="Enter your password..." readonly>
+                  <button type="button" class="sim-btn" style="background: #ef4444;">Verify Password Now</button>
+                  <div style="margin-top: 10px; font-size: 0.68rem; color: #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                    🔒 100% Verified Secure SSL (Fake Image)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clue Explanations Panel -->
+          <div class="clue-details-panel" id="cluePanel">
+            <div class="clue-details-title">🔍 Inspectable Phishing Red Flags:</div>
+            <div class="clue-list">
+              <div class="clue-item" id="clue1">
+                <strong>Clue 1: Swapped Letters & Sneaky Subdomain</strong>
+                <p>The address says "g00gle" with zeros and ends in ".xyz". The real google.com is placed as a fake subdomain on the left to fool your eyes.</p>
+              </div>
+              <div class="clue-item" id="clue2">
+                <strong>Clue 2: Fake Urgency Timer</strong>
+                <p>Scammers want you to panic and not think carefully. Legitimate companies never give you a 5-minute countdown to delete your account.</p>
+              </div>
+              <div class="clue-item" id="clue3">
+                <strong>Clue 3: Fake Padlock Sticker in the Page</strong>
+                <p>Because the real browser bar lacks HTTPS, attackers draw their own lock icon inside the webpage to trick unsuspecting visitors.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Interactive Container (Hidden by default) -->
+          <div id="quizContainer" style="display: none; margin-top: 24px; text-align: center; background: rgba(0,0,0,0.3); padding: 24px; border-radius: 16px;">
+            <h4 style="font-size: 1.2rem; margin-bottom: 12px;">Quick Quiz: Which portal should you enter your password into?</h4>
+            <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 16px;">
+              <button type="button" class="btn-neon-action" onclick="answerQuiz('left')">Portal A (Left Window)</button>
+              <button type="button" class="btn-neon-action" style="background: #ff4757; color: #fff;" onclick="answerQuiz('right')">Portal B (Right Window)</button>
+            </div>
+            <div id="quizFeedback" style="font-size: 0.95rem; font-weight: 700; color: #cbd5e1;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. BOTTOM BADGES & STATS -->
+    <section class="certifications-section" id="certifications">
+      <div class="container">
+        <div class="cert-grid">
+          <div class="cert-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>SOC2 Type II Certified</span>
+          </div>
+          <div class="cert-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>ISO 27001 Compliant</span>
+          </div>
+          <div class="cert-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>FIDO2 & WebAuthn Ready</span>
+          </div>
+          <div class="cert-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+            <span>OWASP Top 10 Aligned</span>
+          </div>
+        </div>
+
+        <!-- Fine-print stats -->
+        <div class="stats-banner">
+          <div class="stat-box">
+            <h4>99.98%</h4>
+            <p>Catch Rate on Credential Harvesters</p>
+          </div>
+          <div class="stat-box">
+            <h4>0.02s</h4>
+            <p>Average Heuristic Inspection Latency</p>
+          </div>
+          <div class="stat-box">
+            <h4>500,000+</h4>
+            <p>Disposable Phishing Traps Blocked</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Minimalist Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-copy">
+        &copy; 2026 AegisPhish Security. Simple English Anti-Phishing Protection.
+      </div>
+      <div class="footer-links">
+        <a href="#scannerSection">Scanner</a>
+        <a href="#defenseModules">Defense Modules</a>
+        <a href="#phishingArena">Phishing Arena</a>
+        <a href="/api/health" target="_blank">API Status</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
